@@ -1,0 +1,2 @@
+# Ignore .ruby-version for now since I'm running different patchlevel rubies
+/.ruby-version
