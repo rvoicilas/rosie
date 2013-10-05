@@ -7,6 +7,7 @@ module Rosie
   end
 
   class Jenkins
+    # Jenkins server url
     attr_reader :url
 
     def initialize(url)
@@ -21,20 +22,27 @@ module Rosie
       true
     end
 
+    # Public: returns an Array of hashes of the type
+    #
+    # {:name => "", :url => ""}
+    #
+    # for all the build failures reported by
+    # a Jenkins server
     def failures
       uri = URI.join(@url, "/api/", "json")
       response = Net::HTTP.get_response(uri)
-      if response.code == "200"
-        data = JSON.parse(response.body)
-        failures = data.collect do |job|
-          {:name => job["name"], :url => job["url"]} if
-            job["color"].downcase.start_with? "red"
-        end
-        return failures.compact, nil
-      else
-        error = {:code => response.code, :message => response.message}
-        return nil, error
+
+      # Bail out fast if we don't get a HTTP 200 OK
+      return nil, {:code => response.code, :message => response.message} unless
+        response.code == "200"
+
+      data = JSON.parse(response.body)
+      failures = data.collect do |job|
+        {:name => job["name"], :url => job["url"]} if
+          job["color"].downcase.start_with? "red"
       end
+      return failures.compact, nil
+
     end
   end
 end
