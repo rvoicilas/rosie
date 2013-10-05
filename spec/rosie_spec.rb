@@ -1,4 +1,5 @@
 require 'spec_helper'
+require_relative '../lib/rosie'
 
 module Rosie
   describe Rosie do

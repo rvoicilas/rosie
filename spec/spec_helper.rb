@@ -1,8 +1,6 @@
 require 'minitest/autorun'
 require 'rspec'
 
-require_relative '../lib/rosie'
-
 # Make rspec work with minitest's capture_io
 RSpec.configure do |c|
   c.include MiniTest::Assertions
