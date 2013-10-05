@@ -16,13 +16,17 @@ module Rosie
       let (:url) { "http://jekins.builds.org" }
       let (:failures_url) { "#{url}/api/json" }
       let (:jenkins) { Jenkins.new(url) }
-      
+
       it "can be listed" do
+        def build_job(job_name, color)
+          {"name" => job_name, "url" => "#{url}/job/#{job_name}", "color" => color}
+        end
+
         jobs = [
-                {"name" => "rosie.rb-dev", "url" => "#{url}/job/rosie-dev", "color" => "red"},
-                {"name" => "rosie.rb-staging", "url" => "#{url}/job/rosie-staging", "color" => "blue_anime"},
-                {"name" => "rosie.rb-prod", "url" => "#{url}/job/rosie-prod", "color" => "blue"}
-               ]
+                ["rosie.rb-dev", "red"],
+                ["rosie.rb-staging", "blue_anime"],
+                ["rosie.rb-prod", "blue"]
+               ].collect { |job, color| build_job(job, color) }
 
         stub_request(:get, failures_url).
           to_return(:status => 200, :body => jobs.to_json)
@@ -30,7 +34,7 @@ module Rosie
         failures, error = jenkins.failures
         error.should be_nil
         failures.length.should == 1
-        expected = {:name => "rosie.rb-dev", :url => "#{url}/job/rosie-dev"}
+        expected = {:name => "rosie.rb-dev", :url => "#{url}/job/rosie.rb-dev"}
         failures[0].should == expected
       end
 
