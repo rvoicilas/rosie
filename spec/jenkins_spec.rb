@@ -38,7 +38,7 @@ module Rosie
         failures[0].should == expected
       end
 
-      it "returns an error when it can't get build failures" do
+      it "return an error when they can't be retrieved" do
         stub_request(:get, failures_url).
           to_return(:status => [404, "Not Found"])
         failures, error = jenkins.failures
